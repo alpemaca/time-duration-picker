@@ -15,6 +15,7 @@ angular.module('ez.timepicker', [])
   showMinute          : 'true',
   showSecond          : 'true',
   showMeridian        : 'true',
+  showOutputTime      : 'true',
   inputContainerClass : 'input-group',
   incIconClass        : 'icon-chevron-up',
   decIconClass        : 'icon-chevron-down'
@@ -47,6 +48,7 @@ angular.module('ez.timepicker', [])
       scope.showMinute          = scope.$eval(attrs.showMinute || TimepickerConfig.showMinute);
       scope.showSecond          = scope.$eval(attrs.showSecond || TimepickerConfig.showSecond);
       scope.showMeridian        = scope.$eval(attrs.showMeridian || TimepickerConfig.showMeridian);
+      scope.outputTime          = scope.$eval(attrs.showOutputTime || TimepickerConfig.showOutputTime);
       scope.meridians           = attrs.meridians || TimepickerConfig.meridians;
       scope.inputContainerClass = attrs.inputContainerClass || TimepickerConfig.inputContainerClass;
       scope.incIconClass        = attrs.incIconClass || TimepickerConfig.incIconClass;
@@ -224,7 +226,11 @@ angular.module('ez.timepicker', [])
       };
 
       var formatOutput = function() {
-        scope.time = scope.widget.hours + ':' + scope.widget.minutes + ':' + scope.widget.seconds;
+        if (scope.showOutputTime) {
+          scope.time = scope.widget.hours + ':' + scope.widget.minutes + ':' + scope.widget.seconds;
+        }
+        else
+          scope.time = ""
 
         if (scope.showDay && scope.widget.days) {
           scope.time = scope.widget.days + ' days ' + scope.time;
@@ -312,7 +318,7 @@ angular.module('ez.timepicker', [])
           months = match[2] ? match[2].toString() : '';
           days = match[3] ? match[3].toString() : '';
           hours = match[5] ? match[4].toString() : '';
-          minutes = match[5] ? match[5].toString() : match[4].toString();
+          minutes = match[5] ? match[5].toString() : (match[4] ? match[4].toString() : '');
           seconds = match[6] ? match[6].toString() : '';
 
           if (hours.length > 2) {
@@ -370,6 +376,9 @@ angular.module('ez.timepicker', [])
 
         scope.widget.minutes = Math.ceil(minutes / scope.minuteStep) * scope.minuteStep;
         scope.widget.seconds = Math.ceil(seconds / scope.secondStep) * scope.secondStep;
+        scope.widget.years   = years
+        scope.widget.months  = months
+        scope.widget.days    = days
 
         formatHours();
         formatMinutes();
